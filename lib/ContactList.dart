@@ -8,8 +8,6 @@ class ContactList extends StatefulWidget {
   }
 }
 
-ContactData param;
-
 class ContactListState extends State<ContactList> {
   List<ContactData> data = [];
 
@@ -22,13 +20,17 @@ class ContactListState extends State<ContactList> {
       ),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
-          onPressed: () {
-            setState(() {
-              if (param != null) {
-                data.add(param);
-                param = null;
-              }
-            });
+          onPressed: () async {
+            final result = await Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => SecondRoute()),
+            ) as ContactData;
+            if (result != null) {
+              setState(() {
+                data.add(result);
+              });
+            }
+
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => SecondRoute()),
@@ -50,11 +52,12 @@ class ContactListState extends State<ContactList> {
   }
 }
 
-final nameController = TextEditingController();
-final surnameController = TextEditingController();
-final phoneNumberController = TextEditingController();
-
 class SecondRoute extends StatelessWidget {
+  ContactData param;
+  final nameController = TextEditingController();
+  final surnameController = TextEditingController();
+  final phoneNumberController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -64,17 +67,19 @@ class SecondRoute extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.check),
         onPressed: () {
-          if (phoneNumberController.text != "") {
+          if (nameController.text != "" &&
+              phoneNumberController.text != "" &&
+              surnameController.text != "") {
             param = ContactData(
-              //123
+                //123
                 name: nameController.text,
                 surname: surnameController.text,
-                phone_number: int.tryParse(phoneNumberController.text));
+                phone_number: phoneNumberController.text);
+            nameController.text = "";
+            surnameController.text = "";
+            phoneNumberController.text = "";
+            Navigator.of(context).pop(param);
           }
-          nameController.text = "";
-          surnameController.text = "";
-          phoneNumberController.text = "";
-          Navigator.pop(context);
         },
       ),
       body: Center(

@@ -3,5 +3,5 @@ class ContactData{
 
   String name;
   String surname;
-  int phone_number;
+  String phone_number;
 }
